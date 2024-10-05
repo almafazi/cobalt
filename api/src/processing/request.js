@@ -45,7 +45,8 @@ export function createResponse(responseType, responseData) {
             case "tunnel":
                 response = {
                     url: createStream(responseData),
-                    filename: responseData?.filename
+                    filename: responseData?.filename,
+                    fileMetaData: responseData?.fileMetadata
                 }
                 break;
 
@@ -63,6 +64,14 @@ export function createResponse(responseType, responseData) {
             default:
                 throw "unreachable"
         }
+
+        console.log({
+            status,
+            body: {
+                status: responseType,
+                ...response
+            }
+        });
 
         return {
             status,

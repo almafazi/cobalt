@@ -1,7 +1,7 @@
 export default (f, style, isAudioOnly, isAudioMuted) => {
     let filename = '';
 
-    let infoBase = [f.service, f.id];
+    let infoBase = [(f.title ?? f.service), f.id];
     let classicTags = [...infoBase];
     let basicTags = [];
 
