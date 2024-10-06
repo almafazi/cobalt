@@ -2,9 +2,18 @@ import Cookie from './cookie.js';
 import { readFile, writeFile } from 'fs/promises';
 import { parse as parseSetCookie, splitCookiesString } from 'set-cookie-parser';
 import { env } from '../../config.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the current file's path
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Resolve the cookiePath dynamically based on the script's directory
+const cookiePath = path.join(__dirname, 'cookies.json');
+
 
 const WRITE_INTERVAL = 60000,
-      cookiePath = env.cookiePath,
       COUNTER = Symbol('counter');
 
 let cookies = {}, dirty = false, intervalId;
