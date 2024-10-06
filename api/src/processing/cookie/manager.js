@@ -16,7 +16,15 @@ const setup = async () => {
         cookies = await readFile(cookiePath, 'utf8');
         cookies = JSON.parse(cookies);
         intervalId = setInterval(writeChanges, WRITE_INTERVAL)
-    } catch { /* no cookies for you */ }
+    } catch (error) {
+        // Handle the error
+        console.error('An error occurred:', error.message);
+        console.error('Error details:', error);
+    
+        if (error.code === 'ENOENT') {
+            console.error('File not found. Please check if the file exists at the specified path:', cookiePath);
+        }
+    }
 }
 
 setup();
