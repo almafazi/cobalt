@@ -19,8 +19,6 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
         },
         params = {};
 
-        console.log([r.filenameAttributes, filenameStyle, isAudioOnly, isAudioMuted]);
-
     if (r.isPhoto) action = "photo";
     else if (r.picker) action = "picker"
     else if (r.isGif && twitterGif) action = "gif";

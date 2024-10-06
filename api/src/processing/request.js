@@ -65,14 +65,6 @@ export function createResponse(responseType, responseData) {
                 throw "unreachable"
         }
 
-        console.log({
-            status,
-            body: {
-                status: responseType,
-                ...response
-            }
-        });
-
         return {
             status,
             body: {
