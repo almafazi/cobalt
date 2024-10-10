@@ -1,0 +1,85 @@
+Arguments: 
+  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn install
+
+PATH: 
+  /Users/almafazi/.rvm/gems/ruby-2.7.6/bin:/Users/almafazi/.rvm/gems/ruby-2.7.6@global/bin:/Users/almafazi/.rvm/rubies/ruby-2.7.6/bin:/Users/almafazi/Library/Application Support/Herd/bin/:/Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin:/Users/almafazi/.bun/bin:/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/usr/local/opt/php@7.4/sbin:/usr/local/opt/php@7.4/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/almafazi/.config/composer/vendor/bin:/Users/almafazi/Library/Android/sdk/emulator:/Users/almafazi/Library/Android/sdk/platform-tools:/Users/almafazi/.rvm/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  20.17.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@imput%2fversion-info: Not found
+      at params.callback [as _callback] (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:66145:18)
+      at self.callback (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:140890:22)
+      at Request.emit (node:events:519:28)
+      at Request.<anonymous> (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:141862:10)
+      at Request.emit (node:events:519:28)
+      at IncomingMessage.<anonymous> (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:141784:12)
+      at Object.onceWrapper (node:events:633:28)
+      at IncomingMessage.emit (node:events:531:35)
+      at endReadableNT (node:internal/streams/readable:1696:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  {
+      "name": "@imput/cobalt-api",
+      "description": "save what you love",
+      "version": "10.1.0",
+      "author": "imput",
+      "exports": "./src/cobalt.js",
+      "type": "module",
+      "engines": {
+          "node": ">=18"
+      },
+      "scripts": {
+          "start": "node src/cobalt",
+          "setup": "node src/util/setup",
+          "test": "node src/util/test",
+          "token:youtube": "node src/util/generate-youtube-tokens"
+      },
+      "repository": {
+          "type": "git",
+          "url": "git+https://github.com/imputnet/cobalt.git"
+      },
+      "license": "AGPL-3.0",
+      "bugs": {
+          "url": "https://github.com/imputnet/cobalt/issues"
+      },
+      "homepage": "https://github.com/imputnet/cobalt#readme",
+      "dependencies": {
+          "@imput/version-info": "workspace:^",
+          "content-disposition-header": "0.6.0",
+          "cors": "^2.8.5",
+          "dotenv": "^16.0.1",
+          "esbuild": "^0.14.51",
+          "express": "^4.18.1",
+          "express-rate-limit": "^6.3.0",
+          "ffmpeg-static": "^5.1.0",
+          "hls-parser": "^0.10.7",
+          "ipaddr.js": "2.1.0",
+          "nanoid": "^4.0.2",
+          "node-cache": "^5.1.2",
+          "psl": "1.9.0",
+          "set-cookie-parser": "2.6.0",
+          "undici": "^5.19.1",
+          "url-pattern": "1.0.3",
+          "youtube-search-api": "^1.2.2",
+          "youtubei.js": "^10.3.0",
+          "zod": "^3.23.8"
+      },
+      "optionalDependencies": {
+          "freebind": "^0.2.2"
+      }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

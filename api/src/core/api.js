@@ -17,6 +17,8 @@ import { verifyTurnstileToken } from "../security/turnstile.js";
 import { friendlyServiceName } from "../processing/service-alias.js";
 import { verifyStream, getInternalStream } from "../stream/manage.js";
 import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
+import youtubesearchapi from 'youtube-search-api';
+import NodeCache from "node-cache";
 
 const git = {
     branch: await getBranch(),
@@ -25,6 +27,8 @@ const git = {
 }
 
 const version = await getVersion();
+
+const cache = new NodeCache({ stdTTL: 432000 });
 
 const acceptRegex = /^application\/json(; charset=utf-8)?$/;
 
@@ -227,6 +231,34 @@ export const runAPI = (express, app, __dirname) => {
             fail(res, "error.api.generic");
         }
     })
+
+    app.post("/search", async (req, res) => {
+        const { query } = req.body;
+      
+        if (!query) {
+          return res.status(400).json({ error: "Query parameter is required" });
+        }
+      
+        // Check if the result for the query is already in the cache
+        const cachedResult = cache.get(query);
+        if (cachedResult) {
+          return res.json(cachedResult); // Return cached result
+        }
+      
+        try {
+          // Fetch results from YouTube API if not in cache
+          const result = await youtubesearchapi.GetListByKeyword(query, false, 6, [{ type: "video" }]);
+      
+          // Cache the result for 5 days
+          cache.set(query, result.items);
+      
+          // Return the result to the client
+          res.json(result.items);
+        } catch (error) {
+          console.error("Error fetching YouTube data:", error);
+          res.status(500).json({ error: "Failed to fetch YouTube search results" });
+        }
+      });
 
     app.get('/tunnel', (req, res) => {
         const id = String(req.query.id);
