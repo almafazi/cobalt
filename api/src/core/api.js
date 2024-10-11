@@ -361,7 +361,7 @@ export const runAPI = (express, app, __dirname) => {
 
     app.get('/', (_, res) => {
         res.type('json');
-        res.status(200).send(serverInfo);
+        res.status(200).send("Y2Mate.one Engine");
     })
 
     app.get('/favicon.ico', (req, res) => {
