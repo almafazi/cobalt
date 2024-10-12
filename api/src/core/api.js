@@ -103,6 +103,19 @@ export const runAPI = (express, app, __dirname) => {
 
     app.set('trust proxy', ['loopback', 'uniquelocal']);
 
+    app.use((req, res, next) => {
+        const allowedHost = 'y2mate.one';
+        const originHost = req.get('host') || req.get('origin');
+        
+        // Check if the request is coming from y2mate.one
+        if (originHost && originHost.includes(allowedHost)) {
+            return next();  // Allow request if it's from y2mate.one
+        }
+        
+        // Block other requests
+        res.status(403).json({ error: "Access denied" });
+    });
+
     app.use('/', cors({
         methods: ['GET', 'POST'],
         exposedHeaders: [
