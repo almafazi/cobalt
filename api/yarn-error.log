@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn install
+  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn add flat-cache
 
 PATH: 
   /Users/almafazi/.rvm/gems/ruby-2.7.6/bin:/Users/almafazi/.rvm/gems/ruby-2.7.6@global/bin:/Users/almafazi/.rvm/rubies/ruby-2.7.6/bin:/Users/almafazi/Library/Application Support/Herd/bin/:/Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin:/Users/almafazi/.bun/bin:/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/usr/local/opt/php@7.4/sbin:/usr/local/opt/php@7.4/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/almafazi/.config/composer/vendor/bin:/Users/almafazi/Library/Android/sdk/emulator:/Users/almafazi/Library/Android/sdk/platform-tools:/Users/almafazi/.rvm/bin
@@ -58,11 +58,11 @@ npm manifest:
           "cors": "^2.8.5",
           "dotenv": "^16.0.1",
           "esbuild": "^0.14.51",
-          "express": "^4.18.1",
+          "express": "^4.21.0",
           "express-rate-limit": "^6.3.0",
           "ffmpeg-static": "^5.1.0",
           "hls-parser": "^0.10.7",
-          "ipaddr.js": "2.1.0",
+          "ipaddr.js": "2.2.0",
           "nanoid": "^4.0.2",
           "node-cache": "^5.1.2",
           "psl": "1.9.0",
@@ -70,7 +70,7 @@ npm manifest:
           "undici": "^5.19.1",
           "url-pattern": "1.0.3",
           "youtube-search-api": "^1.2.2",
-          "youtubei.js": "^10.3.0",
+          "youtubei.js": "^10.5.0",
           "zod": "^3.23.8"
       },
       "optionalDependencies": {
