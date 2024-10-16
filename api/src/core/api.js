@@ -20,9 +20,9 @@ import { createResponse, normalizeRequest, getIP } from "../processing/request.j
 import youtubesearchapi from 'youtube-search-api';
 import NodeCache from "node-cache";
 import * as APIKeys from "../security/api-keys.js";
-import { createClient } from 'redis';
-const redisClient = createClient();
-await redisClient.connect();
+// import { createClient } from 'redis';
+// const redisClient = createClient();
+// await redisClient.connect();
 
 const git = {
     branch: await getBranch(),
@@ -256,21 +256,21 @@ export const runAPI = (express, app, __dirname) => {
         }
 
         try {
-            const cacheKey = `${normalizedRequest.downloadMode}_${parsed.patternMatch.id}`;
-            const cachedResult = await redisClient.get(cacheKey);
-            if (cachedResult) {
-                const parsedResult = JSON.parse(cachedResult);
-                return res.status(parsedResult.status).json(parsedResult.body);
-            }
+            // const cacheKey = `${normalizedRequest.downloadMode}_${parsed.patternMatch.id}`;
+            // const cachedResult = await redisClient.get(cacheKey);
+            // if (cachedResult) {
+            //     const parsedResult = JSON.parse(cachedResult);
+            //     return res.status(parsedResult.status).json(parsedResult.body);
+            // }
             const result = await match({
                 host: parsed.host,
                 patternMatch: parsed.patternMatch,
                 params: normalizedRequest,
             });
         
-            await redisClient.set(cacheKey, JSON.stringify(result), {
-                EX: 1200 
-            });
+            // await redisClient.set(cacheKey, JSON.stringify(result), {
+            //     EX: 1200 
+            // });
         
             res.status(result.status).json(result.body);
         } catch (error) {
