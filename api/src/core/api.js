@@ -269,7 +269,7 @@ export const runAPI = (express, app, __dirname) => {
             });
         
             await redisClient.set(cacheKey, JSON.stringify(result), {
-                EX: 86400 
+                EX: 1200 
             });
         
             res.status(result.status).json(result.body);
