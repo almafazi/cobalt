@@ -100,7 +100,8 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                             filename: r.audioFilename,
                             isAudioOnly: true,
                             audioFormat,
-                        })
+                        }),
+                        metadata: r.metadata,
                     }
                     break;
             }
@@ -140,7 +141,7 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                 case "ok":
                 case "vk":
                 case "tiktok":
-                    params = { type: "proxy" };
+                    params = { metadata: r.metadata, type: "proxy" };
                     break;
 
                 case "facebook":
@@ -192,7 +193,7 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
             params = {
                 type: processType,
                 u: Array.isArray(r.urls) ? r.urls[1] : r.urls,
-
+                metadata: r.metadata,
                 audioBitrate,
                 audioCopy: copy,
                 audioFormat,

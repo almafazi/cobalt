@@ -14,7 +14,7 @@
     export let number: number;
 
     let imageLoaded = false;
-    const isTunnel = new URL(item.url).pathname === "/tunnel";
+    const isTunnel = new URL(item.url).pathname === "/stream";
 
     $: itemType = item.type ?? "photo";
 </script>

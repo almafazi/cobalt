@@ -55,6 +55,14 @@ export default async function(obj) {
         filenameBase = `tiktok_${detail.author.uniqueId}_${postId}`,
         bestAudio; // will get defaulted to m4a later on in match-action
 
+    let metadata = {      
+        title: detail?.desc,
+        artist: detail?.author?.uniqueId,
+        cover: detail?.video?.dynamicCover ? detail?.video?.dynamicCover : detail?.video?.cover,
+        duration: detail?.video?.duration,
+        audio: detail?.music?.playUrl
+    }
+
     images = detail.imagePost?.images;
 
     let playAddr = detail.video.playAddr;
@@ -81,6 +89,7 @@ export default async function(obj) {
         return {
             urls: video,
             filename: videoFilename,
+            metadata: metadata,
             headers: { cookie }
         }
     }
@@ -89,6 +98,7 @@ export default async function(obj) {
         return {
             urls: audio,
             audioFilename: audioFilename,
+            metadata: metadata,
             isAudioOnly: true,
             bestAudio,
             headers: { cookie }
@@ -117,6 +127,7 @@ export default async function(obj) {
             urls: audio,
             audioFilename: audioFilename,
             isAudioOnly: true,
+            metadata: metadata,
             bestAudio,
             headers: { cookie }
         }
@@ -125,6 +136,7 @@ export default async function(obj) {
     if (audio) {
         return {
             urls: audio,
+            metadata: metadata,
             audioFilename: audioFilename,
             isAudioOnly: true,
             bestAudio,

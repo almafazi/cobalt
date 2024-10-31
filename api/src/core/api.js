@@ -6,12 +6,13 @@ import { getCommit, getBranch, getRemote, getVersion } from "@imput/version-info
 import jwt from "../security/jwt.js";
 import stream from "../stream/stream.js";
 import match from "../processing/match.js";
+import path from 'path';
 
 import { env } from "../config.js";
 import { extract } from "../processing/url.js";
 import { languageCode } from "../misc/utils.js";
 import { Bright, Cyan } from "../misc/console-text.js";
-import { generateHmac, generateSalt } from "../misc/crypto.js";
+import { decrypt, generateHmac, generateSalt } from "../misc/crypto.js";
 import { randomizeCiphers } from "../misc/randomize-ciphers.js";
 import { verifyTurnstileToken } from "../security/turnstile.js";
 import { friendlyServiceName } from "../processing/service-alias.js";
@@ -20,6 +21,9 @@ import { createResponse, normalizeRequest, getIP } from "../processing/request.j
 import youtubesearchapi from 'youtube-search-api';
 import NodeCache from "node-cache";
 import * as APIKeys from "../security/api-keys.js";
+import processRequest from "../processing/render-video.js";
+import fs from 'fs'; // Import fs
+
 // import { createClient } from 'redis';
 // const redisClient = createClient();
 // await redisClient.connect();
@@ -320,7 +324,7 @@ export const runAPI = (express, app, __dirname) => {
         }
     });
 
-    app.get('/tunnel', apiTunnelLimiter, (req, res) => {
+    app.get('/stream', apiTunnelLimiter, (req, res) => {
         const id = String(req.query.id);
         const exp = String(req.query.exp);
         const sig = String(req.query.sig);
@@ -351,6 +355,8 @@ export const runAPI = (express, app, __dirname) => {
         return stream(res, streamInfo);
     })
 
+
+
     app.get('/itunnel', (req, res) => {
         if (!req.ip.endsWith('127.0.0.1')) {
             return res.sendStatus(403);
@@ -372,6 +378,64 @@ export const runAPI = (express, app, __dirname) => {
 
         return stream(res, { type: 'internal', ...streamInfo });
     })
+
+    app.post('/render-tiktok-video', async (req, res) => {
+        const { images, audio, artist } = req.body;
+    
+        if (!Array.isArray(images) || !audio) {
+            return res.status(400).json({ error: 'Please provide an array of image URLs and an audio URL.' });
+        }
+    
+        try {
+            const videoURL = await processRequest(images, audio, artist);
+            res.json({ downloadUrl: videoURL});
+        } catch (error) {
+            console.error('Error processing request:', error);
+            res.status(500).json({ error: 'An error occurred while processing your request.' });
+        }
+    });
+
+    app.get('/download-tiktok-video', (req, res) => {
+
+        const file = req.query.file;  // Use query parameter instead of route parameter
+        if (!file) {
+            return res.status(400).send('Filename query parameter is required');
+        }
+
+        const filename = decrypt(file);
+        const filePath = path.join(__dirname, 'public/videos', filename);
+        
+        fs.stat(filePath, (err, stats) => {
+            if (err) {
+                console.error('File not found:', err);
+                return res.status(404).send('File not found');
+            }
+        
+            // Set headers to indicate file download
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+            res.setHeader('Content-Length', stats.size);
+            res.setHeader('Content-Type', 'application/octet-stream');
+        
+            const readStream = fs.createReadStream(filePath);
+            readStream.pipe(res);
+
+            readStream.on('end', () => {
+                fs.unlink(filePath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error('Error deleting file:', unlinkErr);
+                    } else {
+                        console.log('File deleted:', filePath);
+                    }
+                });
+            });
+
+            // Handle errors in the read stream
+            readStream.on('error', (streamErr) => {
+                console.error('Stream error:', streamErr);
+                res.status(500).send('Error streaming file');
+            });
+        });
+    });
 
     app.get('/', (_, res) => {
         res.type('json');

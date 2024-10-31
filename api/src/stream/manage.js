@@ -53,7 +53,7 @@ export function createStream(obj) {
         encryptStream(streamData, iv, secret)
     )
 
-    let streamLink = new URL('/tunnel', env.apiURL);
+    let streamLink = new URL('/stream', env.apiURL);
 
     const params = {
         'id': streamID,

@@ -46,7 +46,8 @@ export function createResponse(responseType, responseData) {
                 response = {
                     url: createStream(responseData),
                     filename: responseData?.filename,
-                    fileMetaData: responseData?.fileMetadata
+                    fileMetaData: responseData?.fileMetadata,
+                    metadata: responseData?.metadata
                 }
                 break;
 
@@ -54,7 +55,8 @@ export function createResponse(responseType, responseData) {
                 response = {
                     picker: responseData?.picker,
                     audio: responseData?.u,
-                    audioFilename: responseData?.filename
+                    audioFilename: responseData?.filename,
+                    metadata: responseData?.metadata
                 }
                 break;
 
