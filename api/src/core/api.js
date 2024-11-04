@@ -1,4 +1,5 @@
 import cors from "cors";
+import http from "node:http";
 import rateLimit from "express-rate-limit";
 import { setGlobalDispatcher, ProxyAgent } from "undici";
 import { getCommit, getBranch, getRemote, getVersion } from "@imput/version-info";
@@ -8,10 +9,12 @@ import stream from "../stream/stream.js";
 import match from "../processing/match.js";
 import path from 'path';
 
-import { env } from "../config.js";
+import { env, isCluster, setTunnelPort } from "../config.js";
 import { extract } from "../processing/url.js";
-import { Bright, Cyan } from "../misc/console-text.js";
-import { decrypt, generateHmac, generateSalt } from "../misc/crypto.js";
+import { Green, Bright, Cyan } from "../misc/console-text.js";
+import { hashHmac } from "../security/secrets.js";
+import { createStore } from "../store/redis-ratelimit.js";
+import { decrypt } from "../misc/crypto.js";
 import { randomizeCiphers } from "../misc/randomize-ciphers.js";
 import { verifyTurnstileToken } from "../security/turnstile.js";
 import { friendlyServiceName } from "../processing/service-alias.js";
@@ -40,7 +43,6 @@ const cache = new NodeCache({ stdTTL: 432000 });
 
 const acceptRegex = /^application\/json(; charset=utf-8)?$/;
 
-const ipSalt = generateSalt();
 const corsConfig = env.corsWildcard ? {} : {
     origin: env.corsURL,
     optionsSuccessStatus: 200
@@ -51,7 +53,7 @@ const fail = (res, code, context) => {
     res.status(status).json(body);
 }
 
-export const runAPI = (express, app, __dirname) => {
+export const runAPI = async (express, app, __dirname, isPrimary = true) => {
     const startTime = new Date();
     const startTimestamp = startTime.getTime();
 
@@ -79,31 +81,36 @@ export const runAPI = (express, app, __dirname) => {
         return res.status(status).json(body);
     };
 
+    const keyGenerator = (req) => hashHmac(getIP(req), 'rate').toString('base64url');
+
     const sessionLimiter = rateLimit({
         windowMs: 60000,
-        max: 10,
-        standardHeaders: true,
+        limit: 10,
+        standardHeaders: 'draft-6',
         legacyHeaders: false,
-        keyGenerator: req => generateHmac(getIP(req), ipSalt),
+        keyGenerator,
+        store: await createStore('session'),
         handler: handleRateExceeded
     });
 
     const apiLimiter = rateLimit({
         windowMs: env.rateLimitWindow * 1000,
-        max: (req) => req.rateLimitMax || env.rateLimitMax,
-        standardHeaders: true,
+        limit: (req) => req.rateLimitMax || env.rateLimitMax,
+        standardHeaders: 'draft-6',
         legacyHeaders: false,
-        keyGenerator: req => req.rateLimitKey || generateHmac(getIP(req), ipSalt),
+        keyGenerator: req => req.rateLimitKey || keyGenerator(req),
+        store: await createStore('api'),
         handler: handleRateExceeded
     })
 
     const apiTunnelLimiter = rateLimit({
         windowMs: env.rateLimitWindow * 1000,
-        max: (req) => req.rateLimitMax || env.rateLimitMax,
-        standardHeaders: true,
+        limit: (req) => req.rateLimitMax || env.rateLimitMax,
+        standardHeaders: 'draft-6',
         legacyHeaders: false,
-        keyGenerator: req => req.rateLimitKey || generateHmac(getIP(req), ipSalt),
-        handler: (req, res) => {
+        keyGenerator: req => req.rateLimitKey || keyGenerator(req),
+        store: await createStore('tunnel'),
+        handler: (_, res) => {
             return res.sendStatus(429)
         }
     })
@@ -182,7 +189,7 @@ export const runAPI = (express, app, __dirname) => {
                 return fail(res, "error.api.auth.jwt.invalid");
             }
 
-            req.rateLimitKey = generateHmac(token, ipSalt);
+            req.rateLimitKey = hashHmac(token, 'rate');
         } catch {
             return fail(res, "error.api.generic");
         }
@@ -319,7 +326,7 @@ export const runAPI = (express, app, __dirname) => {
         }
     });
 
-    app.get('/stream', apiTunnelLimiter, (req, res) => {
+    app.get('/stream', apiTunnelLimiter, async (req, res) => {
         const id = String(req.query.id);
         const exp = String(req.query.exp);
         const sig = String(req.query.sig);
@@ -338,7 +345,7 @@ export const runAPI = (express, app, __dirname) => {
             return res.status(200).end();
         }
 
-        const streamInfo = verifyStream(id, sig, exp, sec, iv);
+        const streamInfo = await verifyStream(id, sig, exp, sec, iv);
         if (!streamInfo?.service) {
             return res.status(streamInfo.status).end();
         }
@@ -350,9 +357,7 @@ export const runAPI = (express, app, __dirname) => {
         return stream(res, streamInfo);
     })
 
-
-
-    app.get('/itunnel', (req, res) => {
+    const itunnelHandler = (req, res) => {
         if (!req.ip.endsWith('127.0.0.1')) {
             return res.sendStatus(403);
         }
@@ -372,7 +377,9 @@ export const runAPI = (express, app, __dirname) => {
         ]);
 
         return stream(res, { type: 'internal', ...streamInfo });
-    })
+    };
+
+    app.get('/itunnel', itunnelHandler);
 
     app.post('/render-tiktok-video', async (req, res) => {
         const { images, audio, artist } = req.body;
@@ -461,21 +468,27 @@ export const runAPI = (express, app, __dirname) => {
         setGlobalDispatcher(new ProxyAgent(env.externalProxy))
     }
 
-    app.listen(env.apiPort, env.listenAddress, () => {
-        console.log(`\n` +
-            Bright(Cyan("cobalt ")) + Bright("API ^ω⁠^") + "\n" +
+    http.createServer(app).listen({
+        port: env.apiPort,
+        host: env.listenAddress,
+        reusePort: env.instanceCount > 1 || undefined
+    }, () => {
+        if (isPrimary) {
+            console.log(`\n` +
+                Bright(Cyan("cobalt ")) + Bright("API ^ω⁠^") + "\n" +
 
-            "~~~~~~\n" +
-            Bright("version: ") + version + "\n" +
-            Bright("commit: ") + git.commit + "\n" +
-            Bright("branch: ") + git.branch + "\n" +
-            Bright("remote: ") + git.remote + "\n" +
-            Bright("start time: ") + startTime.toUTCString() + "\n" +
-            "~~~~~~\n" +
+                "~~~~~~\n" +
+                Bright("version: ") + version + "\n" +
+                Bright("commit: ") + git.commit + "\n" +
+                Bright("branch: ") + git.branch + "\n" +
+                Bright("remote: ") + git.remote + "\n" +
+                Bright("start time: ") + startTime.toUTCString() + "\n" +
+                "~~~~~~\n" +
 
-            Bright("url: ") + Bright(Cyan(env.apiURL)) + "\n" +
-            Bright("port: ") + env.apiPort + "\n"
-        );
+                Bright("url: ") + Bright(Cyan(env.apiURL)) + "\n" +
+                Bright("port: ") + env.apiPort + "\n"
+            );
+        }
 
         if (env.apiKeyURL) {
             APIKeys.setup(env.apiKeyURL);
@@ -484,5 +497,19 @@ export const runAPI = (express, app, __dirname) => {
         if (env.cookiePath) {
             Cookies.setup(env.cookiePath);
         }
-    })
+    });
+
+    if (isCluster) {
+        const istreamer = express();
+        istreamer.get('/itunnel', itunnelHandler);
+        const server = istreamer.listen({
+            port: 0,
+            host: '127.0.0.1',
+            exclusive: true
+        }, () => {
+            const { port } = server.address();
+            console.log(`${Green('[✓]')} cobalt sub-instance running on 127.0.0.1:${port}`);
+            setTunnelPort(port);
+        });
+    }
 }

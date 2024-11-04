@@ -2,6 +2,7 @@ import { env } from "../config.js";
 import { readFile } from "node:fs/promises";
 import { Green, Yellow } from "../misc/console-text.js";
 import ip from "ipaddr.js";
+import * as cluster from "../misc/cluster.js";
 
 // this function is a modified variation of code
 // from https://stackoverflow.com/a/32402438/14855621
@@ -116,6 +117,10 @@ const formatKeys = (keyData) => {
     return formatted;
 }
 
+const updateKeys = (newKeys) => {
+    keys = formatKeys(newKeys);
+}
+
 const loadKeys = async (source) => {
     let updated;
     if (source.protocol === 'file:') {
@@ -131,7 +136,10 @@ const loadKeys = async (source) => {
     }
 
     validateKeys(updated);
-    keys = formatKeys(updated);
+
+    cluster.broadcast({ api_keys: updated });
+
+    updateKeys(updated);
 }
 
 const wrapLoad = (url, initial = false) => {
@@ -204,8 +212,16 @@ export const validateAuthorization = (req) => {
 }
 
 export const setup = (url) => {
-    wrapLoad(url, true);
-    if (env.keyReloadInterval > 0) {
-        setInterval(() => wrapLoad(url), env.keyReloadInterval * 1000);
+    if (cluster.isPrimary) {
+        wrapLoad(url, true);
+        if (env.keyReloadInterval > 0) {
+            setInterval(() => wrapLoad(url), env.keyReloadInterval * 1000);
+        }
+    } else if (cluster.isWorker) {
+        process.on('message', (message) => {
+            if ('api_keys' in message) {
+                updateKeys(message.api_keys);
+            }
+        });
     }
 }

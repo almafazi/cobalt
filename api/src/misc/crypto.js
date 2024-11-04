@@ -35,14 +35,6 @@ export const decrypt = (encryptedText) => {
     }
 };
 
-export function generateSalt() {
-    return randomBytes(64).toString('hex');
-}
-
-export function generateHmac(str, salt) {
-    return createHmac("sha256", salt).update(str).digest("base64url");
-}
-
 export function encryptStream(plaintext, iv, secret) {
     const buff = Buffer.from(JSON.stringify(plaintext));
     const key = Buffer.from(secret, "base64url");
