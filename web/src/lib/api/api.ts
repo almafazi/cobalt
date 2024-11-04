@@ -22,10 +22,11 @@ const request = async (url: string) => {
         audioBitrate: getSetting("save", "audioBitrate"),
         audioFormat: getSetting("save", "audioFormat"),
         tiktokFullAudio: getSetting("save", "tiktokFullAudio"),
-        youtubeDubBrowserLang: getSetting("save", "youtubeDubBrowserLang"),
+        youtubeDubLang: getSetting("save", "youtubeDubLang"),
 
         youtubeVideoCodec: getSetting("save", "youtubeVideoCodec"),
         videoQuality: getSetting("save", "videoQuality"),
+        youtubeHLS: getSetting("save", "youtubeHLS"),
 
         filenameStyle: getSetting("save", "filenameStyle"),
         disableMetadata: getSetting("save", "disableMetadata"),
@@ -82,7 +83,7 @@ const request = async (url: string) => {
     const response: Optional<CobaltAPIResponse> = await fetch(api, {
         method: "POST",
         redirect: "manual",
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.timeout(20000),
         body: JSON.stringify(request),
         headers: {
             "Accept": "application/json",

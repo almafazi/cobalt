@@ -37,7 +37,7 @@ export function createResponse(responseType, responseData) {
 
             case "redirect":
                 response = {
-                    url: responseData?.u,
+                    url: responseData?.url,
                     filename: responseData?.filename
                 }
                 break;
@@ -54,7 +54,7 @@ export function createResponse(responseType, responseData) {
             case "picker":
                 response = {
                     picker: responseData?.picker,
-                    audio: responseData?.u,
+                    audio: responseData?.url,
                     audioFilename: responseData?.filename,
                     metadata: responseData?.metadata
                 }

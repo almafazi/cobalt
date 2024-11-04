@@ -15,7 +15,8 @@ const freebind = env.freebindCIDR && await import('freebind').catch(() => {});
 const streamCache = new NodeCache({
     stdTTL: env.streamLifespan,
     checkperiod: 10,
-    deleteOnExpire: true
+    deleteOnExpire: true,
+    useClones: false,
 })
 
 streamCache.on("expired", (key) => {
@@ -34,7 +35,7 @@ export function createStream(obj) {
         streamData = {
             exp: exp,
             type: obj.type,
-            urls: obj.u,
+            urls: obj.url,
             service: obj.service,
             filename: obj.filename,
 
@@ -46,6 +47,8 @@ export function createStream(obj) {
             audioBitrate: obj.audioBitrate,
             audioCopy: !!obj.audioCopy,
             audioFormat: obj.audioFormat,
+
+            isHLS: obj.isHLS || false,
         };
 
     streamCache.set(
@@ -100,7 +103,8 @@ export function createInternalStream(url, obj = {}) {
         service: obj.service,
         headers,
         controller,
-        dispatcher
+        dispatcher,
+        isHLS: obj.isHLS,
     });
 
     let streamLink = new URL('/itunnel', `http://127.0.0.1:${env.apiPort}`);

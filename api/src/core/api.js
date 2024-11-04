@@ -10,7 +10,6 @@ import path from 'path';
 
 import { env } from "../config.js";
 import { extract } from "../processing/url.js";
-import { languageCode } from "../misc/utils.js";
 import { Bright, Cyan } from "../misc/console-text.js";
 import { decrypt, generateHmac, generateSalt } from "../misc/crypto.js";
 import { randomizeCiphers } from "../misc/randomize-ciphers.js";
@@ -27,6 +26,7 @@ import fs from 'fs'; // Import fs
 // import { createClient } from 'redis';
 // const redisClient = createClient();
 // await redisClient.connect();
+import * as Cookies from "../processing/cookie/manager.js";
 
 const git = {
     branch: await getBranch(),
@@ -232,14 +232,9 @@ export const runAPI = (express, app, __dirname) => {
 
     app.post('/', async (req, res) => {
         const request = req.body;
-        const lang = languageCode(req);
 
         if (!request.url) {
             return fail(res, "error.api.link.missing");
-        }
-
-        if (request.youtubeDubBrowserLang) {
-            request.youtubeDubLang = lang;
         }
 
         const { success, data: normalizedRequest } = await normalizeRequest(request);
@@ -466,10 +461,6 @@ export const runAPI = (express, app, __dirname) => {
         setGlobalDispatcher(new ProxyAgent(env.externalProxy))
     }
 
-    if (env.apiKeyURL) {
-        APIKeys.setup(env.apiKeyURL);
-    }
-
     app.listen(env.apiPort, env.listenAddress, () => {
         console.log(`\n` +
             Bright(Cyan("cobalt ")) + Bright("API ^ω⁠^") + "\n" +
@@ -484,6 +475,14 @@ export const runAPI = (express, app, __dirname) => {
 
             Bright("url: ") + Bright(Cyan(env.apiURL)) + "\n" +
             Bright("port: ") + env.apiPort + "\n"
-        )
+        );
+
+        if (env.apiKeyURL) {
+            APIKeys.setup(env.apiKeyURL);
+        }
+
+        if (env.cookiePath) {
+            Cookies.setup(env.cookiePath);
+        }
     })
 }

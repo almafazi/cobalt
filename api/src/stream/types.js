@@ -101,8 +101,12 @@ const merge = (streamInfo, res) => {
 
         args = args.concat(ffmpegArgs[format]);
 
-        if (hlsExceptions.includes(streamInfo.service)) {
-            args.push('-bsf:a', 'aac_adtstoasc')
+        if (hlsExceptions.includes(streamInfo.service) && streamInfo.isHLS) {
+            if (streamInfo.service === "youtube" && format === "webm") {
+                args.push('-c:a', 'libopus');
+            } else {
+                args.push('-c:a', 'aac', '-bsf:a', 'aac_adtstoasc');
+            }
         }
 
         if (streamInfo.metadata) {
