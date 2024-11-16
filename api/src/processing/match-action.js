@@ -146,7 +146,6 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                     break;
 
                 case "facebook":
-                case "vine":
                 case "instagram":
                 case "tumblr":
                 case "pinterest":
