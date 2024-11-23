@@ -30,6 +30,7 @@ import fs from 'fs'; // Import fs
 // const redisClient = createClient();
 // await redisClient.connect();
 import * as Cookies from "../processing/cookie/manager.js";
+import got from "got";
 
 const git = {
     branch: await getBranch(),
@@ -356,6 +357,29 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
 
         return stream(res, streamInfo);
     })
+
+    app.get('/proxy-image', async (req, res) => {
+        const base64ImageUrl = req.query.url; // Expect the image URL as a Base64-encoded string
+    
+        if (!base64ImageUrl) {
+            return res.status(400).send("Base64-encoded image URL is required");
+        }
+    
+        try {
+            // Decode the Base64 string to get the actual URL
+            const decodedImageUrl = Buffer.from(base64ImageUrl, 'base64').toString('utf-8');
+    
+            // Fetch the image from the remote server
+            const response = await got(decodedImageUrl, { responseType: 'buffer' });
+    
+            // Set the appropriate content type for the image
+            res.set('Content-Type', response.headers['content-type']);
+            res.send(response.body); // Send the image binary data to the client
+        } catch (error) {
+            console.error("Error fetching the image:", error.message);
+            res.status(500).send("Failed to fetch image");
+        }
+    });
 
     const itunnelHandler = (req, res) => {
         if (!req.ip.endsWith('127.0.0.1')) {

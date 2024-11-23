@@ -1,4 +1,4 @@
-import { genericUserAgent } from "../../config.js";
+import { env, genericUserAgent } from "../../config.js";
 import { createStream } from "../../stream/manage.js";
 import { getCookie, updateCookie } from "../cookie/manager.js";
 
@@ -200,7 +200,12 @@ export default function(obj) {
             return {
                 urls: data.gql_data.shortcode_media.video_url,
                 filename: `instagram_${id}.mp4`,
-                audioFilename: `instagram_${id}_audio`
+                audioFilename: `instagram_${id}_audio`,
+                metadata: {
+                    title: data.context.caption,
+                    cover: env.apiURL+'proxy-image?url='+Buffer.from(data.context.media.display_url).toString('base64'),
+                    artist: data.context.media.username
+                }
             }
         } else if (data?.gql_data?.shortcode_media?.display_url) {
             return {

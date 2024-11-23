@@ -148,6 +148,9 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                 case "facebook":
                 case "vine":
                 case "instagram":
+                    params = {metadata: r.metadata}
+                    break;
+                    
                 case "tumblr":
                 case "pinterest":
                 case "streamable":
