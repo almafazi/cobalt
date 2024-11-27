@@ -51,8 +51,16 @@ export default async function(obj) {
         return { error: "fetch.fail" };
     }
 
+    if (detail.isContentClassified) {
+        return { error: "content.post.age" };
+    }
+
+    if (!detail.author) {
+        return { error: "fetch.empty" };
+    }
+
     let video, videoFilename, audioFilename, audio, images,
-        filenameBase = `tiktok_${detail.author.uniqueId}_${postId}`,
+        filenameBase = `tiktok_${detail.author?.uniqueId}_${postId}`,
         bestAudio; // will get defaulted to m4a later on in match-action
 
     let metadata = {      
@@ -65,7 +73,8 @@ export default async function(obj) {
 
     images = detail.imagePost?.images;
 
-    let playAddr = detail.video.playAddr;
+    let playAddr = detail.video?.playAddr;
+
     if (obj.h265) {
         const h265PlayAddr = detail?.video?.bitrateInfo?.find(b => b.CodecType.includes("h265"))?.PlayAddr.UrlList[0]
         playAddr = h265PlayAddr || playAddr
