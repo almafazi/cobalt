@@ -1,8 +1,8 @@
 Arguments: 
-  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn add flat-cache
+  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn add https-proxy-agent
 
 PATH: 
-  /Users/almafazi/.rvm/gems/ruby-2.7.6/bin:/Users/almafazi/.rvm/gems/ruby-2.7.6@global/bin:/Users/almafazi/.rvm/rubies/ruby-2.7.6/bin:/Users/almafazi/Library/Application Support/Herd/bin/:/Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin:/Users/almafazi/.bun/bin:/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/usr/local/opt/php@7.4/sbin:/usr/local/opt/php@7.4/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/almafazi/.config/composer/vendor/bin:/Users/almafazi/Library/Android/sdk/emulator:/Users/almafazi/Library/Android/sdk/platform-tools:/Users/almafazi/.rvm/bin
+  /Users/almafazi/.rvm/gems/ruby-2.7.6/bin:/Users/almafazi/.rvm/gems/ruby-2.7.6@global/bin:/Users/almafazi/.rvm/rubies/ruby-2.7.6/bin:/Users/almafazi/.local/bin:/Users/almafazi/development/flutter/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/Users/almafazi/miniconda3/bin:/Users/almafazi/Library/Application Support/Herd/bin/:/Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin:/Users/almafazi/.bun/bin:/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/usr/local/opt/php@7.4/sbin:/usr/local/opt/php@7.4/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/almafazi/.config/composer/vendor/bin:/Users/almafazi/Library/Android/sdk/emulator:/Users/almafazi/Library/Android/sdk/platform-tools:/Users/almafazi/.rvm/bin
 
 Yarn version: 
   1.22.19
@@ -30,7 +30,7 @@ npm manifest:
   {
       "name": "@imput/cobalt-api",
       "description": "save what you love",
-      "version": "10.1.0",
+      "version": "10.5.4",
       "author": "imput",
       "exports": "./src/cobalt.js",
       "type": "module",
@@ -39,9 +39,9 @@ npm manifest:
       },
       "scripts": {
           "start": "node src/cobalt",
-          "setup": "node src/util/setup",
           "test": "node src/util/test",
-          "token:youtube": "node src/util/generate-youtube-tokens"
+          "token:youtube": "node src/util/generate-youtube-tokens",
+          "token:jwt": "node src/util/generate-jwt-secret"
       },
       "repository": {
           "type": "git",
@@ -53,28 +53,34 @@ npm manifest:
       },
       "homepage": "https://github.com/imputnet/cobalt#readme",
       "dependencies": {
+          "@datastructures-js/priority-queue": "^6.3.1",
+          "@imput/psl": "^2.0.4",
           "@imput/version-info": "workspace:^",
           "content-disposition-header": "0.6.0",
           "cors": "^2.8.5",
           "dotenv": "^16.0.1",
-          "esbuild": "^0.14.51",
-          "express": "^4.21.0",
-          "express-rate-limit": "^6.3.0",
+          "express": "^4.21.2",
+          "express-rate-limit": "^7.4.1",
           "ffmpeg-static": "^5.1.0",
+          "got": "^14.4.3",
           "hls-parser": "^0.10.7",
           "ipaddr.js": "2.2.0",
-          "nanoid": "^4.0.2",
+          "nanoid": "^5.0.9",
           "node-cache": "^5.1.2",
           "psl": "1.9.0",
+          "redis": "^4.7.0",
           "set-cookie-parser": "2.6.0",
+          "tmp": "^0.2.3",
           "undici": "^5.19.1",
           "url-pattern": "1.0.3",
           "youtube-search-api": "^1.2.2",
-          "youtubei.js": "^10.5.0",
+          "youtubei.js": "^12.2.0",
           "zod": "^3.23.8"
       },
       "optionalDependencies": {
-          "freebind": "^0.2.2"
+          "freebind": "^0.2.2",
+          "rate-limit-redis": "^4.2.0",
+          "redis": "^4.7.0"
       }
   }
 

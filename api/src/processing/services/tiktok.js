@@ -4,15 +4,24 @@ import { extract } from "../url.js";
 import { genericUserAgent } from "../../config.js";
 import { updateCookie } from "../cookie/manager.js";
 import { createStream } from "../../stream/manage.js";
-
+import {HttpsProxyAgent} from 'https-proxy-agent';
+import fetch from 'node-fetch';
 const shortDomain = "https://vt.tiktok.com/";
 
 export default async function(obj) {
     const cookie = new Cookie({});
+    const proxyUrl = process.env.PROXY_URL;
+    let proxyAgent = null;
+
+    if (proxyUrl) {
+        proxyAgent = new HttpsProxyAgent(proxyUrl);
+    }
+
     let postId = obj.postId;
 
     if (!postId) {
         let html = await fetch(`${shortDomain}${obj.shortLink}`, {
+            ...(proxyAgent && { agent: proxyAgent }),
             redirect: "manual",
             headers: {
                 "user-agent": genericUserAgent.split(' Chrome/1')[0]
@@ -31,11 +40,13 @@ export default async function(obj) {
 
     // should always be /video/, even for photos
     const res = await fetch(`https://www.tiktok.com/@i/video/${postId}`, {
+        ...(proxyAgent && { agent: proxyAgent }),
         headers: {
             "user-agent": genericUserAgent,
             cookie,
         }
     })
+
     updateCookie(cookie, res.headers);
 
     const html = await res.text();
