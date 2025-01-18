@@ -1,7 +1,8 @@
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { env, genericUserAgent } from "../../config.js";
 import { createStream } from "../../stream/manage.js";
 import { getCookie, updateCookie } from "../cookie/manager.js";
-
+import fetch from "node-fetch";
 const commonHeaders = {
     "user-agent": genericUserAgent,
     "sec-gpc": "1",
@@ -43,12 +44,19 @@ const cachedDtsg = {
 
 export default function(obj) {
     const dispatcher = obj.dispatcher;
+    const proxyUrl = process.env.PROXY_URL;
+    let proxyAgent = null;
+    
+    if (proxyUrl) {
+        proxyAgent = new HttpsProxyAgent(proxyUrl);
+    }
 
     async function findDtsgId(cookie) {
         try {
             if (cachedDtsg.expiry > Date.now()) return cachedDtsg.value;
 
             const data = await fetch('https://www.instagram.com/', {
+                ...(proxyAgent && { agent: proxyAgent }),
                 headers: {
                     ...commonHeaders,
                     cookie
@@ -79,6 +87,7 @@ export default function(obj) {
         }
 
         const data = await fetch(url, {
+            ...(proxyAgent && { agent: proxyAgent }),
             method,
             headers,
             body: requestData && new URLSearchParams(requestData),
@@ -96,6 +105,7 @@ export default function(obj) {
         oembedURL.searchParams.set('url', `https://www.instagram.com/p/${id}/`);
 
         const oembed = await fetch(oembedURL, {
+            ...(proxyAgent && { agent: proxyAgent }),
             headers: {
                 ...mobileHeaders,
                 ...( token && { authorization: `Bearer ${token}` } ),
@@ -109,6 +119,7 @@ export default function(obj) {
 
     async function requestMobileApi(mediaId, { cookie, token } = {}) {
         const mediaInfo = await fetch(`https://i.instagram.com/api/v1/media/${mediaId}/info/`, {
+            ...(proxyAgent && { agent: proxyAgent }),
             headers: {
                 ...mobileHeaders,
                 ...( token && { authorization: `Bearer ${token}` } ),
@@ -121,6 +132,7 @@ export default function(obj) {
     }
     async function requestHTML(id, cookie) {
         const data = await fetch(`https://www.instagram.com/p/${id}/embed/captioned/`, {
+            ...(proxyAgent && { agent: proxyAgent }),
             headers: {
                 ...embedHeaders,
                 cookie
