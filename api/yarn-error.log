@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn add https-proxy-agent
+  /Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin/node /opt/homebrew/bin/yarn add crypto-js
 
 PATH: 
   /Users/almafazi/.rvm/gems/ruby-2.7.6/bin:/Users/almafazi/.rvm/gems/ruby-2.7.6@global/bin:/Users/almafazi/.rvm/rubies/ruby-2.7.6/bin:/Users/almafazi/.local/bin:/Users/almafazi/development/flutter/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/Users/almafazi/miniconda3/bin:/Users/almafazi/Library/Application Support/Herd/bin/:/Users/almafazi/Library/Application Support/Herd/config/nvm/versions/node/v20.17.0/bin:/Users/almafazi/.bun/bin:/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@8.2/sbin:/opt/homebrew/opt/php@8.2/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/usr/local/opt/php@7.4/sbin:/usr/local/opt/php@7.4/bin:/opt/homebrew/opt/php@8.1/sbin:/opt/homebrew/opt/php@8.1/bin:/opt/homebrew/opt/php@7.4/sbin:/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/almafazi/.config/composer/vendor/bin:/Users/almafazi/Library/Android/sdk/emulator:/Users/almafazi/Library/Android/sdk/platform-tools:/Users/almafazi/.rvm/bin
@@ -64,9 +64,11 @@ npm manifest:
           "ffmpeg-static": "^5.1.0",
           "got": "^14.4.3",
           "hls-parser": "^0.10.7",
+          "https-proxy-agent": "^7.0.6",
           "ipaddr.js": "2.2.0",
           "nanoid": "^5.0.9",
           "node-cache": "^5.1.2",
+          "node-fetch": "^3.3.2",
           "psl": "1.9.0",
           "redis": "^4.7.0",
           "set-cookie-parser": "2.6.0",

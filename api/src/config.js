@@ -40,6 +40,8 @@ const env = {
     turnstileSecret: process.env.TURNSTILE_SECRET,
     jwtSecret: process.env.JWT_SECRET,
     jwtLifetime: process.env.JWT_EXPIRY || 120,
+    externalDownloadUrl: process.env.EXTERNAL_DOWNLOAD_URL,
+    cryptoEncryptKey: process.env.CRYPTO_ENCRYPT_KEY,
 
     sessionEnabled: process.env.TURNSTILE_SITEKEY
                         && process.env.TURNSTILE_SECRET

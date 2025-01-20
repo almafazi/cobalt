@@ -5,6 +5,7 @@ import { Innertube, Session } from "youtubei.js";
 
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
+import { encrypt_string } from "../../misc/crypto-js.js";
 
 const PLAYER_REFRESH_PERIOD = 1000 * 60 * 15; // ms
 
@@ -461,10 +462,23 @@ export default async function (o) {
             urls = audio.decipher(innertube.session.player);
         }
 
+        const ytDlpParams = {
+            downloadMode: 'audio',
+            url: o.id,
+            youtubeHLS: true,
+            audioBitrate: o.audioBitrate,
+            namaFile: basicInfo.title.trim()
+        };
+
+        let metadata = {
+            "externalDownloadUrl": `${env.externalDownloadUrl}${encrypt_string(JSON.stringify(ytDlpParams), env.cryptoEncryptKey, 120)}`
+        }
+
         return {
             type: "audio",
             isAudioOnly: true,
             urls,
+            metadata,
             filenameAttributes,
             fileMetadata,
             bestAudio,

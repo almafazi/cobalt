@@ -112,6 +112,7 @@ export default async function({ host, patternMatch, params }) {
                     fetchInfo.format = "vp9";
                     fetchInfo.isAudioOnly = true;
                     fetchInfo.isAudioMuted = false;
+                    fetchInfo.audioBitrate = params.audioBitrate;
                 }
 
                 r = await youtube(fetchInfo);

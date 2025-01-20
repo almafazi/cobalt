@@ -275,7 +275,7 @@ export default function(obj) {
             }
         } else if (data.image_versions2?.candidates) {
             return {
-                urls: data.image_versions2.candidates[0].url,
+                urls: env.apiURL+'proxy-image?url='+Buffer.from(data.image_versions2.candidates[0].url).toString('base64'),
                 isPhoto: true,
                 filename: `instagram_${id}.jpg`,
             }
