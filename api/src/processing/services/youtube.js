@@ -470,9 +470,13 @@ export default async function (o) {
             namaFile: basicInfo.title.trim()
         };
 
-        let metadata = {
-            "externalDownloadUrl": `${env.externalDownloadUrl}${encrypt_string(JSON.stringify(ytDlpParams), env.cryptoEncryptKey, 120)}`
+        let metadata = undefined;
+        if(env.externalDownloadUrl) {
+            metadata = {
+                "externalDownloadUrl": `${env.externalDownloadUrl}${encrypt_string(JSON.stringify(ytDlpParams), env.cryptoEncryptKey, 120)}`
+            }
         }
+        
 
         return {
             type: "audio",
