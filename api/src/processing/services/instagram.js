@@ -271,7 +271,12 @@ export default function(obj) {
             return {
                 urls: video.url,
                 filename: `instagram_${id}.mp4`,
-                audioFilename: `instagram_${id}_audio`
+                audioFilename: `instagram_${id}_audio`,
+                metadata: {
+                    title: data?.caption?.text,
+                    cover: env.apiURL+'proxy-image?url='+Buffer.from(data.image_versions2.candidates[0].url).toString('base64'),
+                    artist: data?.owner?.username
+                }
             }
         } else if (data.image_versions2?.candidates) {
             return {
