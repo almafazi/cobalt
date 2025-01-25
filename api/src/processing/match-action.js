@@ -15,7 +15,8 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
             filename: r.filenameAttributes ?
                     createFilename(r.filenameAttributes, filenameStyle, isAudioOnly, isAudioMuted) : r.filename,
             fileMetadata: !disableMetadata ? r.fileMetadata : false,
-            requestIP
+            requestIP,
+            originalRequest: r.originalRequest
         },
         params = {};
 
@@ -47,7 +48,7 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
             });
 
         case "photo":
-            responseType = "redirect";
+            params = { type: "proxy" };
             break;
 
         case "gif":
@@ -83,6 +84,7 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                 case "twitter":
                 case "snapchat":
                 case "bsky":
+                case "xiaohongshu":
                     params = { picker: r.picker };
                     break;
 
@@ -145,6 +147,8 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                 case "vk":
                 case "tiktok":
                     params = { metadata: r.metadata, type: "proxy" };
+                case "xiaohongshu":
+                    params = { type: "proxy" };
                     break;
 
                 case "facebook":
