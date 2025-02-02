@@ -2,6 +2,7 @@ import HLS from "hls-parser";
 
 import { fetch } from "undici";
 import { Innertube, Session } from "youtubei.js";
+import { ProxyAgent } from 'undici';
 
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
@@ -126,11 +127,19 @@ const cloneInnertube = async (customFetch) => {
 
 export default async function (o) {
     let yt;
+    let dispatcher;
+
+    if (process.env.PROXY_AGENT_URL) {
+        dispatcher = new ProxyAgent(process.env.PROXY_AGENT_URL);
+    } else {
+        dispatcher = o.dispatcher; // Assuming `o` is defined somewhere in your code
+    }
+
     try {
         yt = await cloneInnertube(
             (input, init) => fetch(input, {
                 ...init,
-                dispatcher: o.dispatcher
+                dispatcher: dispatcher,
             })
         );
     } catch (e) {
