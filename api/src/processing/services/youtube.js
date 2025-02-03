@@ -3,6 +3,7 @@ import HLS from "hls-parser";
 import { fetch } from "undici";
 import { Innertube, Session } from "youtubei.js";
 import { ProxyAgent } from 'undici';
+import fs from 'fs';
 
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
@@ -125,6 +126,12 @@ const cloneInnertube = async (customFetch) => {
     return yt;
 }
 
+// Function to parse JSON cookie file
+function parseJsonCookieFile(filePath) {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+}
+
 export default async function (o) {
     let yt;
     let dispatcher;
@@ -139,6 +146,14 @@ export default async function (o) {
         yt = await cloneInnertube(
             (input, init) => fetch(input, {
                 ...init,
+                headers: process.env.WEB_PROXY
+                    ? {
+                        ...init?.headers,
+                        'Cookie': parseJsonCookieFile(process.env.WEB_PROXY)
+                            .map(cookie => `${cookie.name}=${cookie.value}`)
+                            .join('; ')
+                    }
+                    : init?.headers,
                 dispatcher: dispatcher,
             })
         );
