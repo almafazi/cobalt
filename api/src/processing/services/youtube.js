@@ -3,7 +3,6 @@ import HLS from "hls-parser";
 import { fetch } from "undici";
 import { Innertube, Session } from "youtubei.js";
 import { ProxyAgent } from 'undici';
-import fs from 'fs';
 
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
@@ -78,7 +77,7 @@ const cloneInnertube = async (customFetch) => {
         innertube = await Innertube.create({
             fetch: customFetch,
             retrieve_player: !!cookie,
-            cookie: cookiesJsonToHeaderString(process.env.WEB_PROXY),
+            cookie,
             po_token: rawCookieValues?.po_token,
             visitor_data: rawCookieValues?.visitor_data,
         });
@@ -126,37 +125,6 @@ const cloneInnertube = async (customFetch) => {
     return yt;
 }
 
-// Function to parse JSON cookie file
-function cookiesJsonToHeaderString(filePath) {
-    try {
-        // Read the cookies.json file synchronously
-        const data = fs.readFileSync(filePath, 'utf8');
-
-        // Parse the JSON data
-        const cookiesJson = JSON.parse(data);
-
-        // Initialize an array to hold the cookie strings
-        let cookieStrings = [];
-
-        // Iterate over each cookie object in the array
-        cookiesJson.forEach(cookie => {
-            // Construct the cookie string in the format: name=value
-            let cookieString = `${cookie.name}=${cookie.value}`;
-
-            // Add the cookie string to the array
-            cookieStrings.push(cookieString);
-        });
-
-        // Join all cookie strings with a semicolon and space to form the header string
-        let headerString = cookieStrings.join('; ');
-
-        return headerString;
-    } catch (err) {
-        console.error('Error reading or parsing the file:', err);
-        return null;
-    }
-}
-
 export default async function (o) {
     let yt;
     let dispatcher;
@@ -168,13 +136,11 @@ export default async function (o) {
     }
 
     try {
-         yt = await cloneInnertube(
-            (input, init) => {
-                return fetch(input, {
-                    ...init,
-                    dispatcher: dispatcher,
-                });
-            }
+        yt = await cloneInnertube(
+            (input, init) => fetch(input, {
+                ...init,
+                dispatcher: dispatcher,
+            })
         );
     } catch (e) {
         if (e.message?.endsWith("decipher algorithm")) {
