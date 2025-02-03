@@ -143,19 +143,28 @@ export default async function (o) {
     }
 
     try {
-        yt = await cloneInnertube(
-            (input, init) => fetch(input, {
-                ...init,
-                headers: process.env.WEB_PROXY
-                    ? {
-                        ...init?.headers,
-                        'Cookie': parseJsonCookieFile(process.env.WEB_PROXY)
-                            .map(cookie => `${cookie.name}=${cookie.value}`)
-                            .join('; ')
-                    }
-                    : init?.headers,
-                dispatcher: dispatcher,
-            })
+         yt = await cloneInnertube(
+            (input, init) => {
+                let headers = init?.headers || {};
+
+                if (process.env.WEB_PROXY) {
+                    const webProxyCookies = parseJsonCookieFile(process.env.WEB_PROXY);
+                    const webProxyCookieHeader = webProxyCookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
+                    headers = {
+                        ...headers,
+                        'Cookie': webProxyCookieHeader
+                    };
+                    console.log('Using cookies from WEB_PROXY:', webProxyCookieHeader);
+                } else {
+                    console.log('WEB_PROXY is not set. No cookies will be used.');
+                }
+
+                return fetch(input, {
+                    ...init,
+                    headers: headers,
+                    dispatcher: dispatcher,
+                });
+            }
         );
     } catch (e) {
         if (e.message?.endsWith("decipher algorithm")) {
