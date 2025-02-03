@@ -72,7 +72,8 @@ const cloneInnertube = async (customFetch) => {
 
     const rawCookie = getCookie('youtube');
     const rawCookieValues = rawCookie?.values();
-    const cookie = rawCookie?.toString();
+    // const cookie = rawCookie?.toString();
+    const cookie = cookiesJsonToHeaderString(process.env.WEB_PROXY)
 
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
@@ -127,9 +128,34 @@ const cloneInnertube = async (customFetch) => {
 }
 
 // Function to parse JSON cookie file
-function parseJsonCookieFile(filePath) {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
+function cookiesJsonToHeaderString(filePath) {
+    try {
+        // Read the cookies.json file synchronously
+        const data = fs.readFileSync(filePath, 'utf8');
+
+        // Parse the JSON data
+        const cookiesJson = JSON.parse(data);
+
+        // Initialize an array to hold the cookie strings
+        let cookieStrings = [];
+
+        // Iterate over each cookie object in the array
+        cookiesJson.forEach(cookie => {
+            // Construct the cookie string in the format: name=value
+            let cookieString = `${cookie.name}=${cookie.value}`;
+
+            // Add the cookie string to the array
+            cookieStrings.push(cookieString);
+        });
+
+        // Join all cookie strings with a semicolon and space to form the header string
+        let headerString = cookieStrings.join('; ');
+
+        return headerString;
+    } catch (err) {
+        console.error('Error reading or parsing the file:', err);
+        return null;
+    }
 }
 
 export default async function (o) {
@@ -145,23 +171,8 @@ export default async function (o) {
     try {
          yt = await cloneInnertube(
             (input, init) => {
-                let headers = init?.headers || {};
-
-                if (process.env.WEB_PROXY) {
-                    const webProxyCookies = parseJsonCookieFile(process.env.WEB_PROXY);
-                    const webProxyCookieHeader = webProxyCookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
-                    headers = {
-                        ...headers,
-                        'Cookie': webProxyCookieHeader
-                    };
-                    console.log('Using cookies from WEB_PROXY:', webProxyCookieHeader);
-                } else {
-                    console.log('WEB_PROXY is not set. No cookies will be used.');
-                }
-
                 return fetch(input, {
                     ...init,
-                    headers: headers,
                     dispatcher: dispatcher,
                 });
             }
