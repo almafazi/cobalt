@@ -547,6 +547,21 @@ export default async function (o) {
         filenameAttributes.qualityLabel = `${resolution}p`;
         filenameAttributes.youtubeFormat = codec;
 
+        const ytDlpParams = {
+            downloadMode: 'auto',
+            url: o.id,
+            youtubeHLS: true,
+            videoQuality: `${resolution}`,
+            namaFile: basicInfo.title.trim()
+        };
+
+        let metadata = undefined;
+        if(env.externalDownloadUrl) {
+            metadata = {
+                "externalDownloadUrl": `${env.externalDownloadUrl}${encrypt_string(JSON.stringify(ytDlpParams), env.cryptoEncryptKey, 120)}`
+            }
+        }
+        
         return {
             type: "merge",
             urls: [
@@ -555,6 +570,7 @@ export default async function (o) {
             ],
             filenameAttributes,
             fileMetadata,
+            metadata,
             isHLS: useHLS,
             originalRequest
         }

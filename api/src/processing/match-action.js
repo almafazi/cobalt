@@ -57,6 +57,7 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
 
         case "hls":
             params = {
+                metadata: r.metadata,
                 type: Array.isArray(r.urls) ? "merge" : "remux",
                 isHLS: true,
             }
@@ -119,7 +120,7 @@ export default function({ r, host, audioFormat, isAudioOnly, isAudioMuted, disab
                     break;
 
                 case "youtube":
-                    params = { type: r.type };
+                    params = { metadata: r.metadata, type: r.type };
                     break;
 
                 case "reddit":
