@@ -108,7 +108,7 @@ const merge = (streamInfo, res) => {
 
     const headers = getHeaders(streamInfo.service);
     const rawHeaders = toRawHeaders(headers);
-console.log('url', streamInfo.urls);
+
     try {
         if (streamInfo.urls.length !== 2) return shutdown();
 
