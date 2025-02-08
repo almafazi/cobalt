@@ -49,6 +49,7 @@ async function* readChunks(streamInfo, size) {
 }
 
 async function handleYoutubeStream(streamInfo, res) {
+    console.log('papa')
     const { signal } = streamInfo.controller;
     const cleanup = () => (res.end(), closeRequest(streamInfo.controller));
 
