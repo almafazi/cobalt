@@ -391,7 +391,6 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         }
 
         const streamInfo = getInternalStream(req.query.id);
-        console.log(streamInfo);
         if (!streamInfo) {
             return res.sendStatus(404);
         }
