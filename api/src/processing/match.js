@@ -228,7 +228,8 @@ export default async function({ host, patternMatch, params }) {
 
             case "facebook":
                 r = await facebook({
-                    ...patternMatch
+                    ...patternMatch,
+                    dispatcher
                 });
                 break;
 
