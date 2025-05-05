@@ -22,6 +22,7 @@ import { verifyStream, getInternalStream } from "../stream/manage.js";
 import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
 import youtubesearchapi from 'youtube-search-api';
 import NodeCache from "node-cache";
+
 import * as APIKeys from "../security/api-keys.js";
 import processRequest from "../processing/render-video.js";
 import fs from 'fs'; // Import fs
@@ -31,6 +32,7 @@ import fs from 'fs'; // Import fs
 // await redisClient.connect();
 import * as Cookies from "../processing/cookie/manager.js";
 import got from "got";
+import * as YouTubeSession from "../processing/helpers/youtube-session.js";
 
 const git = {
     branch: await getBranch(),
@@ -85,8 +87,8 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
     const keyGenerator = (req) => hashHmac(getIP(req), 'rate').toString('base64url');
 
     const sessionLimiter = rateLimit({
-        windowMs: 60000,
-        limit: 10,
+        windowMs: env.sessionRateLimitWindow * 1000,
+        limit: env.sessionRateLimit,
         standardHeaders: 'draft-6',
         legacyHeaders: false,
         keyGenerator,
@@ -102,7 +104,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         keyGenerator: req => req.rateLimitKey || keyGenerator(req),
         store: await createStore('api'),
         handler: handleRateExceeded
-    })
+    });
 
     const apiTunnelLimiter = rateLimit({
         windowMs: env.rateLimitWindow * 1000,
@@ -114,7 +116,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         handler: (_, res) => {
             return res.sendStatus(429)
         }
-    })
+    });
 
     app.set('trust proxy', ['loopback', 'uniquelocal']);
 
@@ -186,7 +188,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
                 return fail(res, "error.api.auth.jwt.invalid");
             }
 
-            if (!jwt.verify(token)) {
+            if (!jwt.verify(token, getIP(req, 32))) {
                 return fail(res, "error.api.auth.jwt.invalid");
             }
 
@@ -232,7 +234,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         }
 
         try {
-            res.json(jwt.generate());
+            res.json(jwt.generate(getIP(req, 32)));
         } catch {
             return fail(res, "error.api.generic");
         }
@@ -499,7 +501,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
     }, () => {
         if (isPrimary) {
             console.log(`\n` +
-                Bright(Cyan("cobalt ")) + Bright("API ^ω⁠^") + "\n" +
+                Bright(Cyan("cobalt ")) + Bright("API ^ω^") + "\n" +
 
                 "~~~~~~\n" +
                 Bright("version: ") + version + "\n" +
@@ -520,6 +522,10 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
 
         if (env.cookiePath) {
             Cookies.setup(env.cookiePath);
+        }
+
+        if (env.ytSessionServer) {
+            YouTubeSession.setup();
         }
     });
 

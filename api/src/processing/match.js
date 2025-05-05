@@ -109,7 +109,7 @@ export default async function({ host, patternMatch, params }) {
                 }
 
                 if (url.hostname === "music.youtube.com" || isAudioOnly) {
-                    fetchInfo.quality = "max";
+                    fetchInfo.quality = "1080";
                     fetchInfo.format = "vp9";
                     fetchInfo.isAudioOnly = true;
                     fetchInfo.isAudioMuted = false;
@@ -158,12 +158,8 @@ export default async function({ host, patternMatch, params }) {
                 isAudioOnly = true;
                 isAudioMuted = false;
                 r = await soundcloud({
-                    url,
-                    author: patternMatch.author,
-                    song: patternMatch.song,
+                    ...patternMatch,
                     format: params.audioFormat,
-                    shortLink: patternMatch.shortLink || false,
-                    accessKey: patternMatch.accessKey || false
                 });
                 break;
 
